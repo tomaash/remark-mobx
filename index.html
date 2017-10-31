@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React state management nirvana with MobX</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+      @import url(http://fonts.googleapis.com/css?family=Oswald);
+      @import url(http://fonts.googleapis.com/css?family=Roboto+Slab:400,700);
+      @import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono);
+      @import url(http://fonts.googleapis.com/css?family=Roboto+Mono);
+
+      body {
+        font-family: 'Roboto Slab';
+        color: #f3f3f3;
+      }
+
+      .remark-slide-content {
+        background: #322931;
+      }
+
+      h1, h2, h3 {
+        font-family: 'Roboto Slab';
+        font-weight: bold;
+        margin-bottom: 0;
+        margin-top: -0.2em;
+      }
+
+      .remark-slide-number {
+        font-size: 16px !important;
+      }
+
+      .remark-slide-content h1 { font-size: 2.5em; }
+      .remark-slide-content h2 { font-size: 1.5em; }
+      .remark-slide-content h3 { font-size: 1em; }
+      .bigger-text-slide li {
+        font-size: 150%;
+      }
+      .bigger-text {
+        font-size: 1.5em;
+      }
+      .bigger-text h1 {
+        margin-top: -0.2em;
+      }
+      .big-text .hljs {
+        font-size: 120%
+      }
+      .hljs {
+        padding: 0px !important;
+      }
+
+      .huge-text .hljs {
+        font-size: 1.8em;
+      }
+      .bigger-text li {
+        padding-bottom: 0.5em;
+      }
+
+      .bigger-text .hljs {
+        font-size: 0.9em;
+      }
+
+      .bullets ul {
+        margin-left: 2em;
+      }
+      .title {
+        font-size: 4em;
+      }
+      .subtitle {
+        font-size: 3em;
+      }
+      .nametitle {
+        font-family: 'Roboto Slab';
+        font-size: 3em;
+      }
+      .subsubtitle {
+        font-size: 2.5em;
+      }
+      .pull-left {
+        float: left;
+        width: 49%;
+      }
+      .pull-left-wide {
+        float: left;
+        width: 60%;
+        margin-left: 3rem;
+      }
+      .pull-left-margin {
+        margin-left: 3rem;
+        float: left;
+        width: 45%;
+      }
+
+      .pull-right {
+        float: right;
+        width: 49%;
+      }
+      .pull-right ~ p {
+        clear: both;
+      }
+      .center {
+        margin: auto;
+      }
+      #slideshow .slide .content code {
+        font-size: 0.8em;
+      }
+      #slideshow .slide .content pre code {
+        font-size: 0.9em;
+        padding: 15px;
+      }
+      .inverse {
+        background: #272822;
+        color: #777872;
+        text-shadow: 0 0 20px #333;
+      }
+      .inverse h1, .inverse h2, .inverse .title, .inverse .subsubtitle {
+        color: #f3f3f3;
+        line-height: 0.8em;
+      }
+      .vertical-spacer {
+        padding-top: 4em;
+      }
+      .move-left {
+        margin-left: -7em;
+      }
+      .move-right {
+        margin-left: 3em;
+      }
+      .move-bottom {
+        margin-top: 3em;
+      }
+      .move-bottom-slight {
+        margin-top: 2em;
+      }
+      .move-top {
+        margin-top: -2em;
+      }
+
+      .bottom-right {
+        position: absolute;
+        bottom: 0.5em;
+        right: 0.5em;
+      }
+
+      .bottom-left {
+        position: absolute;
+        bottom: 0.5em;
+        left: 0.5em;
+      }
+
+      .top-right {
+        position: absolute;
+        top: 0.5em;
+        right: 0.5em;
+      }
+
+      .pull-right ~ p {
+        clear: both;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Roboto Mono'; }
+
+      .remark-slide-content {
+        padding: 1em 1em 1em 1em !important;
+      }
+
+       /* Two-column layout */
+      .left-column {
+        color: #777;
+        width: 25%;
+        height: 92%;
+        float: left;
+      }
+      .left-column h2:last-of-type, .left-column h3:last-child {
+          color: #000;
+      }
+
+      .right-column {
+        width: 75%;
+        float: right;
+        /*padding-top: 0.5em;*/
+      }
+      .dabomb {
+        background-image: url("dabomb.jpg");
+        background-size: contain;
+      }
+      .abramov {
+        background-image: url("abramov_tweets.png");
+        background-size: contain;
+      }
+      .abramov .remark-slide-number {
+        display: none;
+      }
+      .ockham {
+        background-image: url("ockham.jpg");
+        background-repeat: no-repeat;
+        background-position: right bottom;
+        background-color: #181415;
+      }
+      .mobx {
+        background-image: url("mobx.svg");
+        background-repeat: no-repeat;
+        background-position: 50% 80%;
+        background-size: 300px;
+      }
+      .injection {
+        background-image: url("injection.png");
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-color: black;
+      }
+
+
+      table{
+        font-size: 180%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        border:4px solid white;
+        margin: auto;
+      }
+
+      th{
+          border:1px solid white;
+          padding: 1rem;
+          color: #b9b5b8;
+      }
+
+      td {
+          border:1px solid white;
+          padding: 1rem;
+      }
+
+
+    </style>
+
+  </head>
+  <body>
+
+<textarea id="source" style="display:none;">
+class: center, middle
+.subsubtitle[
+React state management nirvana
+]
+.title[
+with **MobX**
+]
+
+.vertical-spacer[
+
+]
+
+.subsubtitle[
+Tomáš Holas
+]
+
+
+---
+.center[
+# Current Buzzwords
+]
+.bigger-text[
+.pull-left-margin[
+.subsubtitle[
+  IN:
+]
+
+* Global State
+
+
+* Immutable Data
+
+
+* Pure Functions
+]
+
+.pull-right[
+.subsubtitle[
+  OUT:
+]
+
+* Encapsulation
+
+
+* Object Lifecycle
+
+
+* Dependency Injection
+]
+]
+---
+class: center, middle
+.title[
+Redux Primer
+]
+## Dissecting `react-boilerplate`, 15k+ ★
+---
+class: bigger-text
+# Constants
+```js
+// Follow this format:
+// export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
+
+export const LOAD_REPOS = 'boilerplate/App/LOAD_REPOS';
+export const LOAD_REPOS_SUCCESS = 'boilerplate/App/LOAD_REPOS_SUCCESS';
+export const LOAD_REPOS_ERROR = 'boilerplate/App/LOAD_REPOS_ERROR';
+
+export const CHANGE_USERNAME = 'boilerplate/Home/CHANGE_USERNAME';
+```
+---
+class: bigger-text
+# Actions
+```js
+export function loadRepos() {
+  return {
+    type: LOAD_REPOS,
+  };
+}
+
+export function reposLoaded(repos, username) {
+  return {
+    type: LOAD_REPOS_SUCCESS,
+    repos,
+    username,
+  };
+}
+
+export function repoLoadingError(error) {
+  return {
+    type: LOAD_REPOS_ERROR,
+    error,
+  };
+}
+
+```
+---
+class: bigger-text
+# Immutable State
+```js
+import { fromJS } from 'immutable';
+
+const appInitialState = fromJS({
+  loading: false,
+  error: false,
+  currentUser: false,
+  userData: {
+    repositories: false,
+  },
+});
+
+const homeInitialState = fromJS({
+  username: '',
+});
+```
+---
+class: bigger-text
+# Reducers
+### App Reducer
+```js
+function appReducer(state = appInitialState, action) {
+  switch (action.type) {
+    case LOAD_REPOS:
+      return state
+        .set('loading', true)
+        .set('error', false)
+        .setIn(['userData', 'repositories'], false);
+    case LOAD_REPOS_SUCCESS:
+      return state
+        .setIn(['userData', 'repositories'], action.repos)
+        .set('loading', false)
+        .set('currentUser', action.username);
+    case LOAD_REPOS_ERROR:
+      return state
+        .set('error', action.error)
+        .set('loading', false);
+    default:
+      return state;
+  }
+}
+```
+---
+class: bigger-text
+# Reducers
+### Home Reducer
+```js
+function homeReducer(state = homeInitialState, action) {
+  switch (action.type) {
+    case CHANGE_USERNAME:
+
+      // Delete prefixed '@' from the github username
+      return state
+        .set('username', action.name.replace(/@/gi, ''));
+    default:
+      return state;
+  }
+}
+```
+---
+# Selectors
+```js
+import { createSelector } from 'reselect';
+
+const selectGlobal = (state) => state.get('global');
+const selectRoute = (state) => state.get('route');
+
+const makeSelectCurrentUser = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.get('currentUser')
+);
+
+const makeSelectLoading = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.get('loading')
+);
+
+const makeSelectError = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.get('error')
+);
+
+const makeSelectRepos = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.getIn(['userData', 'repositories'])
+);
+```
+
+---
+class: bigger-text
+# Selectors
+### Example of ... a useful one
+```js
+import { createSelector } from 'reselect'
+
+const getVisibilityFilter = (state) => state.visibilityFilter
+const getTodos = (state) => state.todos
+
+export const getVisibleTodos = createSelector(
+  [ getVisibilityFilter, getTodos ],
+  (visibilityFilter, todos) => {
+    switch (visibilityFilter) {
+      case 'SHOW_ALL':
+        return todos
+      case 'SHOW_COMPLETED':
+        return todos.filter(t => t.completed)
+      case 'SHOW_ACTIVE':
+        return todos.filter(t => !t.completed)
+    }
+  }
+)
+```
+---
+# Sagas
+```js
+import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { LOAD_REPOS } from 'containers/App/constants';
+import { reposLoaded, repoLoadingError } from 'containers/App/actions';
+import { makeSelectUsername } from 'containers/HomePage/selectors';
+import request from 'utils/request'; // based on window.fetch
+
+export function* getRepos() {
+  const username = yield select(makeSelectUsername());
+  const requestURL = `https://api.github.com/users/${username}/repos?type=all&sort=updated`;
+
+  try {
+    const repos = yield call(request, requestURL);
+    yield put(reposLoaded(repos, username));
+  } catch (err) {
+    yield put(repoLoadingError(err));
+  }
+}
+
+export default function* githubData() {
+  yield takeLatest(LOAD_REPOS, getRepos);
+}
+
+```
+---
+### Putting it all together ...
+```js
+export class HomePage extends React.PureComponent …
+```
+```html
+<Input type="text" value={this.props.username} onChange={this.props.onChangeUsername} />
+<ReposList {...reposListProps} /> …
+```
+```js
+export function mapDispatchToProps(dispatch) {
+  return {
+    onChangeUsername: (evt) => dispatch(changeUsername(evt.target.value)),
+    onSubmitForm: (evt) => {
+      if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+      dispatch(loadRepos());
+    },
+  };
+}
+
+const mapStateToProps = createStructuredSelector({
+  repos: makeSelectRepos(),
+  username: makeSelectUsername(),
+  loading: makeSelectLoading(),
+  error: makeSelectError(),
+});
+
+export default compose(
+   // boilerplate's HOC utils
+  injectReducer({ key: 'home', reducer }),
+  injectSaga({ key: 'home', saga }),
+  // from react-redux
+  connect(mapStateToProps, mapDispatchToProps),
+)(HomePage);
+```
+---
+.center[
+# Approaches to state management
+]
+<br/>
+<br/>
+<br/>
+
+| Data Format                         | Change Detection             |
+| ----------------------------------- | ---------------------------- |
+| Mutable                             | Dirty Checking / DOM Diffing |
+| Immutable                           | Reference Checking           |
+| Observable &nbsp;&nbsp;&nbsp;&nbsp; | Publish / Subscribe          |
+
+---
+class: mobx, center
+.title[
+# MobX
+]
+---
+# Observable Data
+```js
+import { observable } from 'mobx'
+import { observer } from 'mobx-react'
+
+class UserStore {
+  @observable username = 'tomaash'
+}
+
+class AppStore {
+  @observable loading = false
+  @observable error = null
+  @observable currentUser = null
+  @observable userData = {
+    repositories: []
+  }
+}
+
+@observer
+export class HomePageComponent extends React.Component {
+  render() {
+    const { userStore } = this.props
+    return (
+      <input
+        type="text"
+        value={userStore.username}
+        onChange={(e) => { userStore.username = e.target.value }} />
+    );
+  }
+}
+
+```
+---
+class: bigger-text
+# Async / Await
+```js
+export class AppStore {
+  @observable loading = false
+  @observable error = null
+  @observable currentUser = null
+  @observable userData = {
+    repositories: null
+  }
+
+  loadRepos = async () => {
+    this.loading = true
+    const { username } = this.mobxStores.userStore
+    const requestURL =
+      `https://api.github.com/users/${username}/repos?type=all&sort=updated`;
+    try {
+      this.userData.repositories = await request(requestURL)
+    } catch (err) {
+      this.error = err.message
+    }
+    this.loading = false
+  }
+}
+
+```
+---
+# Computed Values
+```js
+class TodoList {
+  @observable todos = [];
+  @observable visibilityFilter = 'ALL'
+
+  @computed get filteredTodos() {
+    return {
+      ALL: this.todos,
+      COMPLETED: this.todos.filter(t => t.completed),
+      ACTIVE: this.todos.filter(t => !t.completed)
+    }
+  }
+
+  @computed get currentTodos() {
+    return this.filteredTodos[this.visibilityFilter]
+  }
+
+}
+
+@observer
+export class Todos extends React.Component {
+  render() {
+    return <div>
+      {this.props.todoList.currentTodos.map(t => <Todo data={t} />)}
+    </div>
+  }
+}
+
+```
+---
+class: bigger-text
+# Reactions
+```js
+export class PermissionsPopup extends React.Component {
+
+  componentWillMount() {
+    this.checkboxStates = new ObservableMap<boolean>()
+
+    this.reactionDisposer = reaction(
+      // observe
+      () => this.props.userState.role,
+      // side effect
+      this.initializeCheckboxes
+  }
+
+  initializeCheckboxes = () => {
+    this.props.userState.role.permissions.forEach(
+      id => this.checkboxStates.set(id, true))
+    )
+  }
+
+  componentWillUnmout() {
+    this.reactionDisposer()
+  }
+}
+
+```
+---
+class: injection
+## MobX Dependency Injection
+---
+# Dependency Injection &nbsp;&nbsp;<span style="color:gray">(store → component)</span>
+## Provider HOC
+
+```js
+class App extends React.Component {
+  appStore = new AppStore()
+  userStore = new UserStore()
+  render() {
+    return <Provider appStore={this.appStore} userStore={this.userStore}>
+      <HomePage />
+    </Provider>
+  }
+}
+
+class HomePage extends React.Component {
+  homeController = new HomeController()
+
+  render() {
+    return <Provider homeController={this.homeController}>
+      <HomePageComponent />
+    </Provider>
+  }
+}
+
+```
+---
+# Dependency Injection &nbsp;&nbsp;<span style="color:gray">(store → component)</span>
+## Target Component
+
+```js
+@inject('appStore', 'userStore', 'homeController')
+@observer
+export class HomePageComponent extends React.Component<homePageProps, {}> {
+  render() {
+    const { homeController, appStore, userStore } = this.props
+    return (
+      <div>
+          <form onSubmit={homeController.onSubmitForm}> Show Github repositories by @
+            <input
+              type="text"
+              value={userStore.username}
+              onChange={homeController.onUsernameChange} />
+          </form>
+          {appStore.repos.map((x) => <div key={x.name}>{x.name}</div>)}
+      </div>
+    );
+  }
+}
+```
+---
+# Dependency Injection &nbsp;&nbsp;<span style="color:gray">(store → store)</span>
+## Passing context to store constructor
+```js
+class App extends React.Component {
+
+  appStore = new AppStore(this)
+  userStore = new UserStore(this)
+
+  render() {
+    return <Provider appStore={this.appStore} userStore={this.userStore}>
+      <HomePage />
+    </Provider>
+  }
+}
+
+class HomePage extends React.Component {
+
+  static contextTypes = {
+    mobxStores: PropTypes.object
+  }
+
+  homeController = new HomeController(this.context.mobxStores)
+
+  render() {
+    return <Provider homeController={this.homeController}>
+      <HomePageComponent />
+    </Provider>
+  }
+}
+
+```
+---
+# Stores
+## Home Controller &nbsp;<span style="color:gray">( ... like `mapDispatchToProps` )</span>
+```java
+interface storesContext {
+  appStore: AppStore
+  userStore: UserStore
+}
+
+class HomeController {
+  constructor(private mobxStores: storesContext) { }
+
+  onUsernameChange = (e) => {
+    this.mobxStores.userStore.username = e.target.value
+  }
+
+  onSubmitForm = (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault()
+    this.mobxStores.appStore.loadRepos()
+  }
+}
+```
+---
+class: bigger-text
+# Stores
+## User Store
+```js
+class UserStore {
+  @observable username = 'tomaash'
+  constructor(private mobxStores: storesContext) { }
+}
+```
+---
+# Stores
+## App Store
+```js
+export class AppStore {
+  @observable loading = false
+  @observable error = null
+  @observable currentUser = null
+  @observable userData = {
+    repositories: null
+  }
+  constructor(private mobxStores: storesContext) { }
+
+  @computed get repos() {
+    return this.userData.repositories
+  }
+
+  loadRepos = async () => {
+    this.loadReposStart()
+    const { username } = this.mobxStores.userStore
+    const requestURL = `https://api.github.com/users/${username}/repos?type=all&sort=updated`;
+    try {
+      const repos = await request(requestURL)
+      this.loadReposSuccess(repos, username)
+    } catch (err) {
+      this.loadReposError(err)
+    }
+  }
+  ...
+}
+```
+---
+# Stores
+## App Store &nbsp;<span style="color:gray">( private methods, like `appReducer` )</span>
+```js
+private loadReposStart() {
+  this.error = false
+  this.loading = true
+  this.userData.repositories = null
+}
+
+private loadReposSuccess(repos: Array<any>, username: string) {
+  this.userData.repositories = repos
+  this.currentUser = username
+  this.loading = false
+}
+
+private loadReposError(error: Error) {
+  this.error = error.message
+  this.loading = false
+}
+```
+---
+class: bigger-text-slide
+# Still prefer redux-like API?
+<br/>
+
+* `github.com/mobxjs/mobx-state-tree` <br/><span style="color:gray"> Opinionated, transactional, MobX powered state container combining the best features of the immutable and mutable world for an optimal DX</span>
+
+<br/>
+
+* `github.com/Microsoft/satcheljs` <br/><span style="color:gray"> Satchel is a dataflow framework based on the Flux architecture. It is characterized by exposing an observable state that makes view updates painless and efficient.</span>
+
+???
+MobX is a data flow library, that enables you to roll your own state management architecture with minimal effort
+
+---
+class: abramov
+---
+class: ockham, bigger-text
+# Ockham's Razor
+.vertical-spacer[
+
+]
+.pull-left-wide[
+## “Plurality must never be posited without necessity”
+.pull-right[
+  <br/><br/>
+  William of Ockham
+]
+]
+---
+class: dabomb, center
+# How I learned to stop worrying and ditch Redux
+---
+class: center
+.title[
+<b>Thank You!</b>
+]
+
+<br/>
+
+## tomas.holas@gmail.com
+
+<br/>
+
+.move-top[
+## @tomaash
+]
+
+<br/>
+
+.move-top[
+## `github.com/tomaash/mobx-di-example`
+]
+
+</textarea>
+    <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({
+        highlightStyle: 'hopscotch',
+        ratio: '16:9',
+        countIncrementalSlides: false
+      });
+    </script>
+  </body>
+</html>
