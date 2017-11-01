@@ -28,6 +28,10 @@
       .remark-slide-number {
         font-size: 16px !important;
       }
+      .handle {
+        position: fixed;
+        left: 47%
+      }
 
       .remark-slide-content h1 { font-size: 2.5em; }
       .remark-slide-content h2 { font-size: 1.5em; }
@@ -250,7 +254,16 @@ with **MobX**
 .subsubtitle[
 Tomáš Holas
 ]
+???
+I'd like to ask you a few questions about what technologies you use in your daily job. So who uses:
+* JavaScript
+* React
+* Redux
+* MobX
 
+You see? There is no way this could ever be a fair comparison. Anyone can compare 2 technologies and reach a politically correct conslusion that.. it depends.
+
+So I promise that instead I'll deliver my own, unfiltered, personal opinion on the topic.
 
 ---
 .center[
@@ -262,13 +275,13 @@ Tomáš Holas
   IN:
 ]
 
-* Global State
-
-
 * Immutable Data
 
 
 * Pure Functions
+
+
+* State trees
 ]
 
 .pull-right[
@@ -881,7 +894,8 @@ class: center
       var slideshow = remark.create({
         highlightStyle: 'hopscotch',
         ratio: '16:9',
-        countIncrementalSlides: false
+        countIncrementalSlides: false,
+        slideNumberFormat: '<span class="handle">@tomaash</span> %current% / %total%',
       });
     </script>
   </body>
